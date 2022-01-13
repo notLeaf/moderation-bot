@@ -99,7 +99,7 @@ async function confirmButtons(message, options = {}) {
 
             collector.on("collect", async (i) => {
                 if (i.user.id !== message.user.id) return i.reply({
-                    content: options.othersMessage || "mammt",
+                    content: options.othersMessage || "You cant use these buttons",
                     ephemeral: true
                 })
 
