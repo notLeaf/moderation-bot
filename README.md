@@ -36,4 +36,5 @@ It can take up to 1 hour until the slash commands are displayed
 - [GitHub](https://github.com/notLeaf/leaf-utils) - Leaf-utils `Github`
 - [NPM](https://www.npmjs.com/package/leaf-utils) - Leaf-utils `NPM`
 
-
+## Preview
+if you’re looking for a preview of the bot, check out my [youtube video](https://youtu.be/6t1Dp2iC_oc)
