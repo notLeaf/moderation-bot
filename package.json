@@ -9,7 +9,7 @@
     },
     "keywords": [],
     "author": "",
-    "license": "ISC",
+    "license": "Apache-2.0",
     "dependencies": {
         "discord.js": "^13.4.0",
         "glob": "^7.2.0",
