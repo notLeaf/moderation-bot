@@ -10,8 +10,6 @@ const { fail, success } = require("../../config.json");
 module.exports = {
     name: "timeout",
     description: "time someone out",
-    userPermissions: ["MODERATE_MEMBERS"],
-    clientPermissions: ["MODERATE_MEMBERS"],
     options: [
         {
             name: "target",
@@ -99,7 +97,10 @@ module.exports = {
             .setDescription(
                 `**${interaction.user.tag}** are you sure you want to timeout **${target.user.tag}**`
             )
-            .setFooter(client.user.tag, client.user.displayAvatarURL())
+            .setFooter({
+                text: client.user.tag,
+                iconURL: client.user.displayAvatarURL(),
+            })
             .setColor(randomHex())
             .setTimestamp();
 

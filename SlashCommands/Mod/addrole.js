@@ -1,128 +1,127 @@
-const { Client, CommandInteraction, MessageEmbed } = require("discord.js");
-const {
-    confirmButtons,
-    modLog,
-    randomHex,
-} = require("../../handler/functions");
-const { fail, success } = require("../../config.json");
+const { MessageEmbed } = require("discord.js");
+const { ButtonPages } = require("leaf-utils"); // my package
+const { fail } = require("../../config.json");
+const warnModel = require("../../models/warnModel");
+const moment = require("moment");
 
 module.exports = {
-    name: "addrole",
-    description: "adds the specified role to the provided user",
-    userPermissions: ["MANAGE_ROLES"],
-    clientPermissions: ["MANAGE_ROLES"],
+    name: "warnings",
+    description: "display all warnings that a user has",
     options: [
         {
             name: "target",
-            description: "target to add role to",
+            description: "user you want to view warnings on",
             type: "USER",
             required: true,
-        },
-        {
-            name: "role",
-            description: "role to add",
-            type: "ROLE",
-            required: true,
-        },
-        {
-            name: "reason",
-            description: "reason",
-            type: "STRING",
-            required: false,
         },
     ],
 
     run: async (client, interaction) => {
         const target = interaction.options.getMember("target");
-        const role = interaction.options.getRole("role");
-        const reason =
-            interaction.options.getString("reason") || "`No Reason Provided`";
-
-        if (target.id === interaction.member.id)
-            return interaction.followUp({
-                content: `${fail} You cannot add a role to yourself`,
-            });
-
-        if (
-            target.roles.highest.position >=
-            interaction.member.roles.highest.position
-        )
-            return interaction.followUp({
-                content: `${fail} This user is higher/equal than you`,
-            });
-
-        if (
-            target.roles.highest.position >=
-            interaction.guild.me.roles.highest.position
-        )
-            return interaction.followUp({
-                content: `${fail} This user is higher/equal than me`,
-            });
-
-        if (role.position >= interaction.member.roles.highest.position)
-            return interaction.followUp({
-                content: `${fail} That role is higher/equal than you`,
-            });
-
-        if (role.position >= interaction.guild.me.roles.highest.position)
-            return interaction.followUp({
-                content: `${fail} That role is higher/equal than me`,
-            });
-
-        if (target.roles.cache.has(role.id))
-            return interaction.followUp({
-                content: `${fail} User already has the provided role`,
-            });
-
-        const embed = new MessageEmbed()
-            .setAuthor({
-                name: `${interaction.user.tag}`,
-                iconURL: interaction.user.displayAvatarURL({
-                    dynamic: true,
-                }),
-            })
-            .setDescription(
-                `**${interaction.user.tag}** are you sure you want to add to **${target.user.tag}** the ${role} role`
-            )
-            .setFooter(client.user.tag, client.user.displayAvatarURL())
-            .setColor(randomHex())
-            .setTimestamp();
-
-        confirmButtons(interaction, {
-            embed: embed,
-            authorOnly: `Only <@${interaction.member.id}> can use these buttons`,
-            yes: {
-                style: "SUCCESS",
-                label: "Add",
-                emoji: "✔️",
-            },
-            no: {
-                style: "SECONDARY",
-                label: "No",
-                emoji: "🛑",
-            },
-        }).then(async (confirm) => {
-            if (confirm === "yes") {
-                await target.roles.add(role);
-                interaction.editReply({
-                    content: `${success} **${role.name}** was successfully added to **${target.user.tag}**`,
-                });
-                modLog(interaction, reason, {
-                    Action: "`Add Role`",
-                    Member: `${target}`,
-                    Role: `${role}`,
-                });
-            }
-            if (confirm === "no") {
-                interaction.editReply({
-                    content: `${fail} **${target.user.tag}** didn't get the **${role.name}** role!`,
-                });
-            }
-            if (confirm === "time") {
-                interaction.editReply({
-                    content: `${fail} Time is up`,
-                });
-            }
+        const userWarnings = await warnModel.find({
+            userId: target.id,
+            guildId: interaction.guildId,
         });
+
+        if (!userWarnings || userWarnings.length <= 0)
+            return interaction.followUp({
+                content: `${fail} ${target} has no warnings`,
+            });
+
+        let items = [];
+        array = [];
+        pages = [];
+
+        if (userWarnings.length > 5) {
+            userWarnings.forEach((w, i) => {
+                w.index = i + 1;
+                if (items.length < 5) items.push(w);
+                else {
+                    array.push(items);
+                    items = [w];
+                }
+            });
+            array.push(items);
+
+            array.forEach((x) => {
+                let warns = x
+                    .map(
+                        (w) =>
+                            `Moderator: ${
+                                interaction.guild.members.cache.get(
+                                    w.moderatorId
+                                ) || `${fail}`
+                            }\nReason: \`${w.reason}\`\nDate: \`${moment(
+                                w.timestamp
+                            ).format("MMMM Do YYYY")}\`\nWarnID: \`${w._id}\``
+                    )
+                    .join("\n\n");
+                let emb = new MessageEmbed()
+                    .setAuthor({
+                        name: `${interaction.user.tag}` + "'s warnings",
+                        iconURL: interaction.user.displayAvatarURL({
+                            dynamic: true,
+                        }),
+                    })
+                    .setDescription(`${warns}`)
+                    .setFooter({
+                        text: client.user.tag,
+                        iconURL: client.user.displayAvatarURL(),
+                    })
+                    .setColor("#F36605")
+                    .setTimestamp();
+                pages.push(emb);
+            });
+
+            await ButtonPages({
+                message: interaction,
+                slash_command: true,
+                embeds: pages,
+                time: 300000,
+                back: {
+                    label: " ",
+                    style: "PRIMARY",
+                    emoji: "⬅️",
+                },
+                next: {
+                    label: " ",
+                    style: "PRIMARY",
+                    emoji: "➡️",
+                },
+                authorOnly: "Only <@{{author}}> can use these buttons!",
+            });
+        } else {
+            let warns = userWarnings
+                .map(
+                    (w) =>
+                        `Moderator: ${
+                            interaction.guild.members.cache.get(
+                                w.moderatorId
+                            ) || `${fail}`
+                        }\nReason: \`${w.reason}\`\nDate: \`${moment(
+                            w.timestamp
+                        ).format("MMMM Do YYYY")}\`\nWarnID: \`${w._id}\``
+                )
+                .join("\n\n");
+
+            let emb = new MessageEmbed()
+                .setAuthor({
+                    name: `${interaction.user.tag}` + "'s warnings",
+                    iconURL: interaction.user.displayAvatarURL({
+                        dynamic: true,
+                    }),
+                })
+                .setDescription(`${warns}`)
+                .setFooter({
+                    text: client.user.tag,
+                    iconURL: client.user.displayAvatarURL(),
+                })
+                .setColor("#F36605")
+                .setTimestamp();
+
+            interaction.followUp({
+                embeds: [emb],
+            });
+        }
     },
 };

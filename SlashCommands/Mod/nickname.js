@@ -9,8 +9,6 @@ const { fail, success } = require("../../config.json");
 module.exports = {
     name: "nickname",
     description: "changes the provided user's nickname to the one specified",
-    userPermissions: ["MANAGE_NICKNAMES"],
-    clientPermissions: ["MANAGE_NICKNAMES"],
     options: [
         {
             name: "target",
@@ -79,7 +77,10 @@ module.exports = {
             .setDescription(
                 `**${interaction.user.tag}** are you sure you want to change **${target.user.username}**'s nickname`
             )
-            .setFooter(client.user.tag, client.user.displayAvatarURL())
+            .setFooter({
+                text: client.user.tag,
+                iconURL: client.user.displayAvatarURL(),
+            })
             .setColor(randomHex())
             .setTimestamp();
 

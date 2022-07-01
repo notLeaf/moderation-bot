@@ -1,5 +1,5 @@
+const { fail } = require("../config.json");
 const client = require("../index");
-const { fail } = require('../config.json')
 
 client.on("interactionCreate", async (interaction) => {
     if (interaction.isCommand()) {
@@ -19,24 +19,19 @@ client.on("interactionCreate", async (interaction) => {
                 });
             } else if (option.value) args.push(option.value);
         }
-        interaction.member = interaction.guild.members.cache.get(interaction.user.id);
+        interaction.member = interaction.guild.members.cache.get(
+            interaction.user.id
+        );
 
-        if (!interaction.guild.roles.everyone.permissions.has("USE_EXTERNAL_EMOJIS")) {
+        if (
+            !interaction.guild.roles.everyone.permissions.has(
+                "USE_EXTERNAL_EMOJIS"
+            )
+        ) {
             return interaction.followUp({
-                content: 'The \`@everyone\` role is missing the Permission to \`USE_EXTERNAL_EMOJIS\`, enable it'
-            })
-        }
-
-        if (!interaction.member.permissions.has(cmd.userPermissions || [])) {
-            return interaction.followUp({
-                content: `${fail} You need \`${cmd.userPermissions.join(", ")}\` Permissions`
-            })
-        }
-
-        if (!interaction.guild.me.permissions.has(cmd.clientPermissions || [])) {
-            return interaction.followUp({
-                content: `${fail} I need \`${cmd.clientPermissions.join(", ")}\` Permissions`
-            })
+                content:
+                    "The `@everyone` role is missing the Permission to `USE_EXTERNAL_EMOJIS`, enable it",
+            });
         }
 
         cmd.run(client, interaction, args);

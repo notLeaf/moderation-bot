@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const modLogModel = mongoose.model(
     "modlogs",
@@ -6,6 +6,6 @@ const modLogModel = mongoose.model(
         Guild: String,
         Channel: String,
     })
-)
+);
 
 module.exports = modLogModel;

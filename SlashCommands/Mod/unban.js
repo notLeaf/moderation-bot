@@ -9,8 +9,6 @@ const { fail, success } = require("../../config.json");
 module.exports = {
     name: "unban",
     description: "unbans a member from your server",
-    userPermissions: ["BAN_MEMBERS"],
-    clientPermissions: ["BAN_MEMBERS"],
     options: [
         {
             name: "userid",
@@ -51,7 +49,10 @@ module.exports = {
                 .setDescription(
                     `**${interaction.user.tag}** are you sure you want to unban **${user.tag}**`
                 )
-                .setFooter(client.user.tag, client.user.displayAvatarURL())
+                .setFooter({
+                    text: client.user.tag,
+                    iconURL: client.user.displayAvatarURL(),
+                })
                 .setColor(randomHex())
                 .setTimestamp();
 

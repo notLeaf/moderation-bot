@@ -9,8 +9,6 @@ const { fail, success } = require("../../config.json");
 module.exports = {
     name: "removerole",
     description: "removes the specified role from the provided user",
-    userPermissions: ["MANAGE_ROLES"],
-    clientPermissions: ["MANAGE_ROLES"],
     options: [
         {
             name: "target",
@@ -79,7 +77,10 @@ module.exports = {
             .setDescription(
                 `**${interaction.user.tag}** are you sure you want to remove from **${target.user.tag}** the ${role} role`
             )
-            .setFooter(client.user.tag, client.user.displayAvatarURL())
+            .setFooter({
+                text: client.user.tag,
+                iconURL: client.user.displayAvatarURL(),
+            })
             .setColor(randomHex())
             .setTimestamp();
 

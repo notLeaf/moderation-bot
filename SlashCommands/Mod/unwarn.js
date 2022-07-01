@@ -10,8 +10,6 @@ const warnModel = require("../../models/warnModel");
 module.exports = {
     name: "unwarn",
     description: "unwarns a member in your server",
-    userPermissions: ["KICK_MEMBERS"],
-    clientPermissions: ["KICK_MEMBERS"],
     options: [
         {
             name: "warnid",
@@ -47,7 +45,10 @@ module.exports = {
                 .setDescription(
                     `**${interaction.user.tag}** are you sure you want to unwarn ${user}`
                 )
-                .setFooter(client.user.tag, client.user.displayAvatarURL())
+                .setFooter({
+                    text: client.user.tag,
+                    iconURL: client.user.displayAvatarURL(),
+                })
                 .setColor(randomHex())
                 .setTimestamp();
 
