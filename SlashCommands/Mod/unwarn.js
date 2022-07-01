@@ -1,98 +1,95 @@
-const {
-    Client,
-    CommandInteraction,
-    MessageEmbed
-} = require("discord.js");
+const { Client, CommandInteraction, MessageEmbed } = require("discord.js");
 const {
     confirmButtons,
     modLog,
-    randomHex
-} = require('../../handler/functions');
-const {
-    fail,
-    success
-} = require('../../config.json');
-const warnModel = require('../../models/warnModel');
+    randomHex,
+} = require("../../handler/functions");
+const { fail, success } = require("../../config.json");
+const warnModel = require("../../models/warnModel");
 
 module.exports = {
-    name: 'unwarn',
-    description: 'unwarns a member in your server',
+    name: "unwarn",
+    description: "unwarns a member in your server",
     userPermissions: ["KICK_MEMBERS"],
     clientPermissions: ["KICK_MEMBERS"],
-    options: [{
+    options: [
+        {
             name: "warnid",
             description: "warnId you want to delete",
             type: "STRING",
             required: true,
         },
         {
-            name: 'reason',
-            description: 'reason for this warn',
-            type: 'STRING',
-            required: false
-        }
+            name: "reason",
+            description: "reason for this warn",
+            type: "STRING",
+            required: false,
+        },
     ],
 
     run: async (client, interaction) => {
-
         try {
             const warnId = interaction.options.getString("warnid");
             const data = await warnModel.findById(warnId);
 
             const user = interaction.guild.members.cache.get(data.userId);
-            const reason = interaction.options.getString('reason') || "`No Reason Provided`";
+            const reason =
+                interaction.options.getString("reason") ||
+                "`No Reason Provided`";
 
             const embed = new MessageEmbed()
                 .setAuthor({
                     name: `${interaction.user.tag}`,
                     iconURL: interaction.user.displayAvatarURL({
-                        dynamic: true
-                    })
+                        dynamic: true,
+                    }),
                 })
-                .setDescription(`**${interaction.user.tag}** are you sure you want to unwarn ${user}`)
+                .setDescription(
+                    `**${interaction.user.tag}** are you sure you want to unwarn ${user}`
+                )
                 .setFooter(client.user.tag, client.user.displayAvatarURL())
                 .setColor(randomHex())
-                .setTimestamp()
+                .setTimestamp();
 
             confirmButtons(interaction, {
                 embed: embed,
-                othersMessage: `Only <@${interaction.member.id}> can use these buttons`,
+                authorOnly: `Only <@${interaction.member.id}> can use these buttons`,
                 yes: {
                     style: "PRIMARY",
                     label: "Unwarn",
-                    emoji: "✔️"
+                    emoji: "✔️",
                 },
                 no: {
                     style: "SECONDARY",
                     label: "Cancel",
-                    emoji: "🛑"
-                }
-            }).then(async confirm => {
+                    emoji: "🛑",
+                },
+            }).then(async (confirm) => {
                 if (confirm === "yes") {
-                   await data.delete();
+                    await data.delete();
                     interaction.editReply({
                         content: `${success} Unwarned **${user}** successfully!`,
                     });
                     modLog(interaction, reason, {
-                        Action: '`Unwarn`',
+                        Action: "`Unwarn`",
                         Member: `${user}`,
-                    })
+                    });
                 }
                 if (confirm === "no") {
                     interaction.editReply({
-                        content: `${fail} cancelled!`
-                    })
+                        content: `${fail} cancelled!`,
+                    });
                 }
                 if (confirm === "time") {
                     interaction.editReply({
-                        content: `${fail} Time is up`
-                    })
+                        content: `${fail} Time is up`,
+                    });
                 }
-            })
+            });
         } catch (e) {
             return interaction.followUp({
                 content: `${fail} This is not a valid warnID`,
-            })
+            });
         }
     },
 };

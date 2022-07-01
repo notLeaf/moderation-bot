@@ -7,7 +7,8 @@ module.exports = client;
 
 client.slashCommands = new Collection();
 client.config = require("./config.json");
-client.setMaxListeners(50); require('events').defaultMaxListeners = 50;
+client.setMaxListeners(50);
+require("events").defaultMaxListeners = 50;
 
 require("./handler")(client);
 
