@@ -28,10 +28,9 @@ module.exports = {
     run: async (client, interaction) => {
         try {
             const warnId = interaction.options.getString("warnid");
-            const data = await warnModel.findById(warnId);
-
-            const user = interaction.guild.members.cache.get(data.userId);
-            const reason =
+            data = await warnModel.findById(warnId);
+            user = interaction.guild.members.cache.get(data.userId);
+            reason =
                 interaction.options.getString("reason") ||
                 "`No Reason Provided`";
 

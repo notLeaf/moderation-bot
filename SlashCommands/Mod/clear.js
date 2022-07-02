@@ -35,9 +35,9 @@ module.exports = {
     run: async (client, interaction) => {
         const channel =
             interaction.options.getChannel("channel") || interaction.channel;
-        const member = interaction.options.getMember("target");
-        const amount = interaction.options.getInteger("amount");
-        const reason =
+        member = interaction.options.getMember("target");
+        amount = interaction.options.getInteger("amount");
+        reason =
             interaction.options.getString("reason") || "`No Reason Provided`";
 
         if (amount < 0 || amount > 100)

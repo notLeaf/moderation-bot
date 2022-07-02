@@ -1,11 +1,11 @@
-const { Client, CommandInteraction, MessageEmbed } = require("discord.js");
-const ms = require("ms");
+const { MessageEmbed } = require("discord.js");
 const {
     confirmButtons,
     modLog,
     randomHex,
 } = require("../../handler/functions");
 const { fail, success } = require("../../config.json");
+const ms = require("ms");
 
 module.exports = {
     name: "timeout",
@@ -20,8 +20,22 @@ module.exports = {
         {
             name: "time",
             description: "amount of time to timeout",
+            type: "INTEGER",
+            required: true,
+            minValue: 1,
+            maxValue: 60,
+        },
+        {
+            name: "unit",
+            description: "time unit",
             type: "STRING",
             required: true,
+            choices: [
+                { name: "seconds", value: "s" },
+                { name: "minutes", value: "m" },
+                { name: "hours", value: "h" },
+                { name: "days", value: "d" },
+            ],
         },
         {
             name: "reason",
@@ -32,11 +46,15 @@ module.exports = {
     ],
 
     run: async (client, interaction) => {
-        const target = interaction.options.getMember("target");
-        const time = interaction.options.getString("time");
-        const reason =
+        let target = interaction.options.getMember("target");
+        reason =
             interaction.options.getString("reason") || "`No Reason Provided`";
-        const timeMs = ms(time);
+        time = ms(
+            interaction.options.getInteger("time") +
+                interaction.options.getString("unit")
+        );
+
+        time > 2332800000 ? (time = 2332800000) : (time = time);
 
         if (target.id === interaction.member.id)
             return interaction.editReply({
@@ -69,22 +87,9 @@ module.exports = {
                 content: `${fail} This user is higher/equal than me`,
             });
 
-        if (!timeMs)
+        if (!target.moderatable)
             return interaction.editReply({
-                content: `${fail} Specify a valid time`,
-                ephemeral: true,
-            });
-
-        if (timeMs <= 19000)
-            return interaction.editReply({
-                content: `${fail} You cannot create a timeout with a duration less than 20 seconds`,
-                ephemeral: true,
-            });
-
-        if (timeMs > 2332800000)
-            return interaction.editReply({
-                content: `${fail} You cannot create a timeout lasting longer than 27 days`,
-                ephemeral: true,
+                content: `${fail} This user can't be timed out`,
             });
 
         const embed = new MessageEmbed()
@@ -119,19 +124,21 @@ module.exports = {
             },
         }).then(async (confirm) => {
             if (confirm === "yes") {
-                await target.timeout(timeMs, reason);
+                await target.timeout(time, reason);
                 interaction.editReply({
-                    content: `${success} **${target.user.tag}** has been timeout-ed for **${time}**`,
+                    content: `${success} **${
+                        target.user.tag
+                    }** has been timed out for **${ms(time, { long: true })}**`,
                 });
                 modLog(interaction, reason, {
                     Action: "`Timeout`",
                     Member: `${target}`,
-                    Time: `\`${time}\``,
+                    Time: `\`${ms(time, { long: true })}\``,
                 });
             }
             if (confirm === "no") {
                 interaction.editReply({
-                    content: `${fail} **${target.user.tag}** hasn't been timeout-ed!`,
+                    content: `${fail} **${target.user.tag}** hasn't been timed out!`,
                 });
             }
             if (confirm === "time") {

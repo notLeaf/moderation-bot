@@ -32,8 +32,8 @@ module.exports = {
 
     run: async (client, interaction) => {
         const target = interaction.options.getMember("target");
-        const role = interaction.options.getRole("role");
-        const reason =
+        role = interaction.options.getRole("role");
+        reason =
             interaction.options.getString("reason") || "`No Reason Provided`";
 
         if (

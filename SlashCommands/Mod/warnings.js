@@ -2,7 +2,6 @@ const { MessageEmbed } = require("discord.js");
 const { ButtonPages } = require("leaf-utils"); // my package
 const { fail } = require("../../config.json");
 const warnModel = require("../../models/warnModel");
-const moment = require("moment");
 
 module.exports = {
     name: "warnings",
@@ -51,16 +50,16 @@ module.exports = {
                                 interaction.guild.members.cache.get(
                                     w.moderatorId
                                 ) || `${fail}`
-                            }\nReason: \`${w.reason}\`\nDate: \`${moment(
-                                w.timestamp
-                            ).format("MMMM Do YYYY")}\`\nWarnID: \`${w._id}\``
+                            }\nReason: \`${w.reason}\`\nDate: <t:${parseInt(
+                                w.timestamp / 1000
+                            )}:R>\nWarnID: \`${w._id}\``
                     )
                     .join("\n\n");
 
                 let emb = new MessageEmbed()
                     .setAuthor({
-                        name: `${interaction.user.tag}` + "'s warnings",
-                        iconURL: interaction.user.displayAvatarURL({
+                        name: `${target.user.tag}` + "'s warnings",
+                        iconURL: target.user.displayAvatarURL({
                             dynamic: true,
                         }),
                     })
@@ -99,16 +98,16 @@ module.exports = {
                             interaction.guild.members.cache.get(
                                 w.moderatorId
                             ) || `${fail}`
-                        }\nReason: \`${w.reason}\`\nDate: \`${moment(
-                            w.timestamp
-                        ).format("MMMM Do YYYY")}\`\nWarnID: \`${w._id}\``
+                        }\nReason: \`${w.reason}\`\nDate: <t:${parseInt(
+                            w.timestamp / 1000
+                        )}:R>\nWarnID: \`${w._id}\``
                 )
                 .join("\n\n");
 
             let emb = new MessageEmbed()
                 .setAuthor({
-                    name: `${interaction.user.tag}` + "'s warnings",
-                    iconURL: interaction.user.displayAvatarURL({
+                    name: `${target.user.tag}` + "'s warnings",
+                    iconURL: target.user.displayAvatarURL({
                         dynamic: true,
                     }),
                 })

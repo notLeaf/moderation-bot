@@ -27,12 +27,12 @@ module.exports = {
     run: async (client, interaction) => {
         try {
             const id = interaction.options.getString("userid");
-            const reason =
+            reason =
                 interaction.options.getString("reason") ||
                 "`No Reason Provided`";
-            const user = await client.users.fetch(id);
-            const bans = await interaction.guild.bans.fetch();
-            const bannedusers = bans.find((b) => b.user.id == id);
+            user = await client.users.fetch(id);
+            bans = await interaction.guild.bans.fetch();
+            bannedusers = bans.find((b) => b.user.id == id);
 
             if (!bannedusers)
                 return interaction.followUp({

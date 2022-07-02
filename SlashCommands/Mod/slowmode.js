@@ -29,9 +29,9 @@ module.exports = {
 
     run: async (client, interaction) => {
         const rate = interaction.options.getInteger("rate");
-        const channel =
+        channel =
             interaction.options.getChannel("channel") || interaction.channel;
-        const reason =
+        reason =
             interaction.options.getString("reason") || "`No Reason Provided`";
 
         if (rate <= 0 || rate > "21600")

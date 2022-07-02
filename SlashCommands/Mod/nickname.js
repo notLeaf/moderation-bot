@@ -32,8 +32,8 @@ module.exports = {
 
     run: async (client, interaction) => {
         const target = interaction.options.getMember("target");
-        const newnick = interaction.options.getString("nick");
-        const reason =
+        newnick = interaction.options.getString("nick");
+        reason =
             interaction.options.getString("reason") || "`No Reason Provided`";
 
         if (target.id === interaction.guild.me.id)
