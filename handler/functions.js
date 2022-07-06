@@ -160,12 +160,14 @@ module.exports = {
                             `${interaction.user || `${fail}`}`,
                             true
                         )
-                        .setFooter(
-                            `${interaction.client.user.tag}`,
-                            `${interaction.client.user.displayAvatarURL()}`
-                        )
+                        .setFooter({
+                            text: `${interaction.user.tag}`,
+                            iconURL: interaction.user.displayAvatarURL({
+                                dynamic: true,
+                            }),
+                        })
                         .setTimestamp()
-                        .setColor(randomHex());
+                        .setColor("DARK_RED");
                     for (const field in fields) {
                         embed.addField(field, fields[field], true);
                     }

@@ -1,4 +1,4 @@
-const { MessageEmbed, CommandInteraction, Client } = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
     name: "help",
@@ -21,12 +21,10 @@ module.exports = {
                 true
             )
             .setThumbnail(client.user.displayAvatarURL())
-            .setFooter(
-                `${interaction.member.user.username}`,
-                interaction.member.user.displayAvatarURL({
-                    dynamic: true,
-                })
-            )
+            .setFooter({
+                text: client.user.tag,
+                iconURL: client.user.displayAvatarURL(),
+            })
             .setColor(interaction.guild.me.displayHexColor)
             .setTimestamp();
 

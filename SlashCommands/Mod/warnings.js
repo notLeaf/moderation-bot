@@ -76,12 +76,17 @@ module.exports = {
             await ButtonPages({
                 message: interaction,
                 slash_command: true,
-                embeds: pages,
+                pages: pages,
                 time: 300000,
                 back: {
                     label: " ",
                     style: "PRIMARY",
                     emoji: "⬅️",
+                },
+                home: {
+                    label: " ",
+                    style: "DANGER",
+                    emoji: "🏠",
                 },
                 next: {
                     label: " ",

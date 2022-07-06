@@ -1,4 +1,3 @@
-const { Client, CommandInteraction } = require("discord.js");
 const { modLog } = require("../../handler/functions");
 const { fail, success } = require("../../config.json");
 
@@ -10,6 +9,7 @@ module.exports = {
             name: "channel",
             description: "channel to lock",
             type: "CHANNEL",
+            channelTypes: ["GUILD_TEXT"],
             required: true,
         },
         {
@@ -25,17 +25,10 @@ module.exports = {
         const reason =
             interaction.options.getString("reason") || "`No Reason Provided`";
 
-        if (!channel.isText()) {
-            return interaction.editReply({
-                content: `${fail} Please select a text channel`,
-                ephemeral: true,
-            });
-        }
-
         if (
             channel
-                .permissionsFor(interaction.guild.id)
-                .has("SEND_MESSAGES") === true
+                .permissionsFor(interaction.guild.roles.everyone)
+                .has("SEND_MESSAGES")
         )
             return interaction.followUp({
                 content: `${fail} ${channel} is not locked`,
