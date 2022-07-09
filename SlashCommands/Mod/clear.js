@@ -5,6 +5,7 @@ const { fail } = require("../../config.json");
 module.exports = {
     name: "clear",
     description: "deletes messages",
+    category: "mod",
     options: [
         {
             name: "amount",

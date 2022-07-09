@@ -1,4 +1,4 @@
-const { Client, CommandInteraction, MessageEmbed } = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 const {
     confirmButtons,
     modLog,
@@ -9,6 +9,7 @@ const { fail, success } = require("../../config.json");
 module.exports = {
     name: "removerole",
     description: "removes the specified role from the provided user",
+    category: "mod",
     options: [
         {
             name: "target",

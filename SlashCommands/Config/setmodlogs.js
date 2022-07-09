@@ -1,35 +1,69 @@
-const { Client, CommandInteraction } = require("discord.js");
 const { fail, success } = require("../../config.json");
 const modLogModel = require("../../models/modlogs");
 
 module.exports = {
-    name: "setmodlogs",
-    description: "mod logs channel",
+    name: "modlogs",
+    description: "sets the modlog channel",
+    category: "config",
     options: [
         {
-            name: "channel",
-            description: "channel to send giveaways logs to",
-            type: "CHANNEL",
-            channelTypes: ["GUILD_TEXT"],
-            required: true,
+            name: "enable",
+            description: "enable the modlogs system",
+            type: "SUB_COMMAND",
+            options: [
+                {
+                    name: "channel",
+                    description: "modlogs channel",
+                    type: "CHANNEL",
+                    channelTypes: ["GUILD_TEXT"],
+                    required: true,
+                },
+            ],
+        },
+        {
+            name: "disable",
+            description: "disable the modlogs system",
+            type: "SUB_COMMAND",
         },
     ],
 
     run: async (client, interaction) => {
-        const channel = interaction.options.getChannel("channel");
+        const data =
+            (await modLogModel.findOne({
+                Guild: interaction.guildId,
+            })) ||
+            (await modLogModel.create({
+                Guild: interaction.guildId,
+            }));
+        channel = interaction.options.getChannel("channel");
+        command = interaction.options.getSubcommand();
 
-        const data = await modLogModel.findOne({
-            Guild: interaction.guildId,
-        });
-        if (data) data.delete();
+        if (command === "enable") {
+            if (data.Channel === channel.id)
+                return interaction.followUp({
+                    content: `${fail} This is already the modlogs channel`,
+                });
 
-        new modLogModel({
-            Guild: interaction.guildId,
-            Channel: channel.id,
-        }).save();
+            data.Channel = channel.id;
+            data.Enabled = true;
+            data.save();
 
-        interaction.editReply({
-            content: `${success} Logs have been set to ${channel}`,
-        });
+            interaction.followUp({
+                content: `${success} Logs have been set to ${channel}`,
+            });
+        } else if (command === "disable") {
+            if (data.Enabled !== true)
+                return interaction.followUp({
+                    content: `${fail} Modlogs system is already disabled`,
+                });
+
+            data.Channel = null;
+            data.Enabled = false;
+            data.save();
+
+            interaction.followUp({
+                content: `${success} Modlogs system has been disabled`,
+            });
+        }
     },
 };

@@ -1,4 +1,4 @@
-const { Client, CommandInteraction, MessageEmbed } = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 const {
     confirmButtons,
     modLog,
@@ -10,6 +10,7 @@ const warnModel = require("../../models/warnModel");
 module.exports = {
     name: "unwarn",
     description: "unwarns a member in your server",
+    category: "mod",
     options: [
         {
             name: "warnid",

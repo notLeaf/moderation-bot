@@ -6,6 +6,7 @@ const warnModel = require("../../models/warnModel");
 module.exports = {
     name: "warnings",
     description: "display all warnings that a user has",
+    category: "mod",
     options: [
         {
             name: "target",

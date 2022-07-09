@@ -9,6 +9,7 @@ const { fail, ban } = require("../../config.json");
 module.exports = {
     name: "ban",
     description: "ban a member",
+    category: "mod",
     options: [
         {
             name: "target",

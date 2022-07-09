@@ -3,8 +3,9 @@ const mongoose = require("mongoose");
 const modLogModel = mongoose.model(
     "modlogs",
     new mongoose.Schema({
-        Guild: String,
-        Channel: String,
+        Guild: { type: String },
+        Channel: { type: String },
+        Enabled: { type: Boolean, default: false },
     })
 );
 

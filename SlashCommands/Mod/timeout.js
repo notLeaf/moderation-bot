@@ -10,6 +10,7 @@ const ms = require("ms");
 module.exports = {
     name: "timeout",
     description: "time someone out",
+    category: "mod",
     options: [
         {
             name: "target",

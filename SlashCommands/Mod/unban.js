@@ -9,6 +9,7 @@ const { fail, success } = require("../../config.json");
 module.exports = {
     name: "unban",
     description: "unbans a member from your server",
+    category: "mod",
     options: [
         {
             name: "userid",

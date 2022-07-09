@@ -6,6 +6,7 @@ const ms = require("ms");
 module.exports = {
     name: "slowmode",
     description: "slowmode command",
+    category: "mod",
     options: [
         {
             name: "rate",

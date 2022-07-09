@@ -9,6 +9,7 @@ const { fail, success } = require("../../config.json");
 module.exports = {
     name: "addrole",
     description: "adds the specified role to the provided user",
+    category: "mod",
     options: [
         {
             name: "target",

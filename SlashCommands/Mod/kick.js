@@ -9,6 +9,7 @@ const { fail, success } = require("../../config.json");
 module.exports = {
     name: "kick",
     description: "kick a member",
+    category: "mod",
     options: [
         {
             name: "target",

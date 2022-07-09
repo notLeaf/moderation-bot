@@ -4,6 +4,7 @@ const { fail, success } = require("../../config.json");
 module.exports = {
     name: "unlock",
     description: "unlocks a channel",
+    category: "mod",
     options: [
         {
             name: "channel",

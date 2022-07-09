@@ -9,6 +9,7 @@ const { fail, success } = require("../../config.json");
 module.exports = {
     name: "nickname",
     description: "changes the provided user's nickname to the one specified",
+    category: "mod",
     options: [
         {
             name: "target",
